@@ -376,6 +376,7 @@ jobs:
           fi
           dpkg --version
           if [[ "$BUILD_ARCH" == loong* ]];then
+            echo "build loong"
             export DOCKER_UID=$(id -u)
             export DOCKER_GID=$(id -g)
             cat /etc/passwd
@@ -385,6 +386,7 @@ jobs:
               exit $(cat tmp/exit_code)
             fi
           else
+            echo "build simple"
             tools/build-deepin.sh ${{ steps.tag.outputs.tag }}
           fi
 
