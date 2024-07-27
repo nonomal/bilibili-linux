@@ -321,7 +321,7 @@ jobs:
     name: Build Deepin Package
     needs:
       - build-app
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     strategy:
       matrix:
