@@ -389,7 +389,7 @@ jobs:
             echo "build simple"
             tools/build-deepin.sh ${{ steps.tag.outputs.tag }}
             mkdir -p info/DEBIAN
-            dpkg -e ./tmp/build/io.github.msojocs.bilibili_*_amd64.deb info/DEBIAN
+            dpkg -e ./tmp/build/io.github.msojocs.bilibili_*.deb info/DEBIAN
             ls -l info/DEBIAN
             rm -rf info
           fi
