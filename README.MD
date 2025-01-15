@@ -70,7 +70,7 @@ https://github.com/msojocs/bilibili-linux/releases/tag/continuous
 
 ### 额外补充
 
-如果阁下不喜欢电脑多装一个 Electron，可以自行提取发布版的 `app.asar` 并使用已安装 Electron 启动，建议的 Electron 版本是：`21.3.3`
+如果阁下不喜欢电脑多装一个 Electron，可以自行提取发布版的 `app.asar` 并使用已安装 Electron 启动，建议的 Electron 版本是：`33.0.2`
 
 ## Flag参数配置
 
@@ -87,6 +87,12 @@ https://www.electronjs.org/docs/latest/api/command-line-switches
    --disable-gpu
    --key=value
    ```
+
+## Wayland 窗口置顶操作
+
+从 v1.15.2-3 开始支持。
+
+参考规则设置：https://github.com/msojocs/bilibili-linux/issues/136#issuecomment-2480558792
 
 ## 开发者工具
 
@@ -133,10 +139,3 @@ https://areweloongyet.com/docs/loong-or-loongarch
 对于使用本项目产生的额外问题，如账户封禁被盗等，维护者不对此负责，请谨慎使用；
 
 如有不当之处，请联系本人，邮箱：jiyecafe@gmail.com
-
-## 鸣谢
-
-> [IntelliJ IDEA](https://zh.wikipedia.org/zh-hans/IntelliJ_IDEA) 是一个在各个方面都最大程度地提高开发人员的生产力的 IDE，适用于 JVM 平台语言。
-
-特别感谢 [JetBrains](https://www.jetbrains.com/?from=bilibili-linux) 为开源项目提供免费的 [IntelliJ IDEA](https://www.jetbrains.com/idea/?from=bilibili-linux) 等 IDE 的授权  
-[<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg" width="200"/>](https://www.jetbrains.com/?from=bilibili-linux)

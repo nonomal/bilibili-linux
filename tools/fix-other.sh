@@ -38,14 +38,14 @@ cat "$root_dir/res/scripts/injectIndex.js" > "app/index.js"
 notice "====app.js===="
 
 notice "屏蔽检测"
-grep -lr 'if (!dj' --exclude="app.asar" .
-sed -i 's#if (!dj#if(false\&\&!dj#g' "app/main/app.js"
-# ==='win';if(! 警告9
-grep -lr 'if (!iI)' --exclude="app.asar" .
-sed -i 's#if (!iI)#if(false\&\&!iI)#' "app/main/app.js"
+# grep -lr 'if (!dj' --exclude="app.asar" .
+# sed -i 's#if (!dj#if(false\&\&!dj#g' "app/main/app.js"
+# ==='win';if(! 警告11
+grep -lr 'if (!iT)' --exclude="app.asar" .
+sed -i 's#if (!iT)#if(false\&\&!iT)#' "app/main/app.js"
 # global['bootstrapApp']();
-grep -lr 'if (dj)' --exclude="app.asar" .
-sed -i 's#if (dj)#if(!dj)#' "app/main/app.js"
+# grep -lr 'if (dj)' --exclude="app.asar" .
+# sed -i 's#if (dj)#if(!dj)#' "app/main/app.js"
 #grep -lr '};!fb' --exclude="app.asar" .
 #sed -i 's#};!fb#};false\&\&!fb#' "app/main/app.js"
 
@@ -61,9 +61,9 @@ sed -i 's#process.resourcesPath#path.dirname(this.app.getAppPath())#' app/node_m
 notice "====Bili Bridge===="
 notice "inject"
 cat "$root_dir/res/scripts/injectBridge.js" > "app/main/assets/temp.js"
-cat "app/main/assets/bili-bridge.js" >> "app/main/assets/temp.js"
-rm "app/main/assets/bili-bridge.js"
-mv "app/main/assets/temp.js" "app/main/assets/bili-bridge.js"
+cat "app/main/assets/bili-inject.js" >> "app/main/assets/temp.js"
+rm "app/main/assets/bili-inject.js"
+mv "app/main/assets/temp.js" "app/main/assets/bili-inject.js"
 cp "$root_dir/res/protos/dynamic.proto" "app/main/assets/protos/dynamic.proto"
 mkdir tmp
 cd tmp
