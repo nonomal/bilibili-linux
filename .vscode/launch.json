@@ -8,9 +8,9 @@
           "cwd": "${workspaceRoot}",
           "runtimeExecutable": "${workspaceRoot}/electron/electron",
           "env": {
-            // "ELECTRON_FORCE_IS_PACKAGED": "true" 
+            // "ELECTRON_FORCE_IS_PACKAGED": "true"
           },
-          "args": ["app/app"],
+          "args": ["app/app", "--disable-gpu"],
           // "program": "${workspaceRoot}/app/app/index.js",
           "outputCapture": "std"
           
