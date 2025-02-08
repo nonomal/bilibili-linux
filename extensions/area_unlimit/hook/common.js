@@ -714,26 +714,25 @@ const space_account_info_map = {
   },
 };
 const uposMap = {
-  ks3: 'upos-sz-mirrorks3.bilivideo.com',
-  ks3b: 'upos-sz-mirrorks3b.bilivideo.com',
-  ks3c: 'upos-sz-mirrorks3c.bilivideo.com',
-  ks32: 'upos-sz-mirrorks32.bilivideo.com',
-  kodo: 'upos-sz-mirrorkodo.bilivideo.com',
-  kodob: 'upos-sz-mirrorkodob.bilivideo.com',
+  bos: 'upos-sz-mirrorbos.bilivideo.com',
   cos: 'upos-sz-mirrorcos.bilivideo.com',
   cosb: 'upos-sz-mirrorcosb.bilivideo.com',
-  bos: 'upos-sz-mirrorbos.bilivideo.com',
-  wcs: 'upos-sz-mirrorwcs.bilivideo.com',
-  wcsb: 'upos-sz-mirrorwcsb.bilivideo.com',
-  /** 不限CROS, 限制UA */
+  coso1: 'upos-sz-mirrorcoso1.bilivideo.com',
+  cosov: 'upos-sz-mirrorcosov.bilivideo.com',
   hw: 'upos-sz-mirrorhw.bilivideo.com',
   hwb: 'upos-sz-mirrorhwb.bilivideo.com',
-  upbda2: 'upos-sz-upcdnbda2.bilivideo.com',
-  upws: 'upos-sz-upcdnws.bilivideo.com',
-  uptx: 'upos-sz-upcdntx.bilivideo.com',
-  uphw: 'upos-sz-upcdnhw.bilivideo.com',
-  js: 'upos-tf-all-js.bilivideo.com',
-  hk: 'cn-hk-eq-bcache-01.bilivideo.com',
+  hwo1: 'upos-sz-mirrorhwo1.bilivideo.com',
+  hwov: 'upos-sz-mirrorhwov.bilivideo.com',
+  ali: 'upos-sz-mirrorali.bilivideo.com',
+  alib: 'upos-sz-mirroralib.bilivideo.com',
+  alio1: 'upos-sz-mirroralio1.bilivideo.com',
+  aliov: 'upos-sz-mirroraliov.bilivideo.',
+  '08c': 'upos-sz-mirror08c.bilivideo.com',
+  '08h': 'upos-sz-mirror08h.bilivideo.com',
+  '08ct': 'upos-sz-mirror08ct.bilivideo.com',
+  tf_hw: 'upos-tf-all-hw.bilivideo.com',
+  tf_tx: 'upos-tf-all-tx.bilivideo.com',
+  hk_bcache: 'cn-hk-eq-bcache-01.bilivideo.com',
   akamai: 'upos-hz-mirrorakam.akamaized.net',
 };
 const AREA_MARK_CACHE = {}
@@ -907,7 +906,7 @@ const URL_HOOK = {
    * @param {XMLHttpRequest} req 原请求结果
    * @returns {Promise<void>}
    */
-  "//api.bilibili.com/pgc/player/web/playurl": async (req) => {
+  "//api.bilibili.com/pgc/player/web/v2/playurl": async (req) => {
     const resp = JSON.parse(req.responseText)
 
     // 默认pc，要referer
@@ -980,6 +979,23 @@ const URL_HOOK = {
   "//api.bilibili.com/x/player/playurl": async (req) => {
     // 默认pc，要referer
     UTILS.enableReferer()
+  },
+
+  /**
+   * 获取播放链接
+   * @param {XMLHttpRequest} req 原请求结果
+   * @returns {Promise<void>}
+   */
+  '//api.bilibili.com/x/player/wbi/playurl': async (req) => {
+    // 默认pc，要referer
+    UTILS.enableReferer()
+    const upos = localStorage.upos || ""
+    const isReplaceAkamai = localStorage.replaceAkamai === "true"
+    if (localStorage.uposApplyAll === 'true')
+    {
+      // 应用到所有视频
+      req.responseText = UTILS.replaceUpos(req.responseText, uposMap[upos], isReplaceAkamai, '')
+    }
   },
 
   /**
@@ -1285,6 +1301,18 @@ const URL_HOOK_FETCH = {
     return data.res
   },
 
+  /**
+   * 视频列表
+   * 
+   * @param {{urlInfo: [string, string], config: RequestInit, res: Response }} data 原请求结果
+   * @returns {Promise<Response>}
+   */
+  "https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd": async (data) => {
+    const resp = await data.res.clone().json()
+    // resp.data.item = resp.data.item.filter(e => e.goto !== 'ad')
+    data.res = Response.json(resp)
+    return data.res
+  }
 
 }
 

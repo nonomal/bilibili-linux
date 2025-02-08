@@ -171,7 +171,7 @@ const sleep = (ms) => {
       // danmakuManage.danmakuStore.loadDmPbAll(true)
       
       return Promise.resolve(`成功加载${comments.length}条弹幕`)
-    }
+    },
   }
   const UI = (()=>{
     const init = ()=>{
@@ -281,6 +281,9 @@ const sleep = (ms) => {
             dmTimelineDrawer: false,
             moveFactor: 0,
             dandanplayWithRelated: true,
+            // block level 屏蔽等级
+            blockLevel: 0,
+            isBlockVipColor: false,
           };
         },
         created() {
@@ -293,6 +296,9 @@ const sleep = (ms) => {
           UI.dmTimeline = ()=>{
             this.dmTimelineDrawer = !this.dmTimelineDrawer
           }
+          this.blockLevel = parseInt(localStorage.getItem('dm-filter-weight') || '0')
+          log.info('current weight:', this.weight)
+          this.isBlockVipColor = localStorage.getItem('dm-filter-blockvip') === 'true'
         },
         methods: {
           doSearch: function(){
@@ -313,7 +319,7 @@ const sleep = (ms) => {
               default:
                 break;
             }
-            HandleResult[this.activeName](this.selectOptions, data)
+            HandleResult[this.activeName]?.(this.selectOptions, data)
             .then(res=>{
               this.$message({
                 message: res,
@@ -347,6 +353,14 @@ const sleep = (ms) => {
               dm.stime += time
             });
           }
+        },
+        watch: {
+          blockLevel(n, o) {
+            localStorage.setItem('dm-filter-weight', n)
+          },
+          isBlockVipColor(n, o) {
+            localStorage.setItem('dm-filter-blockvip', n)
+          },
         }
       };
       const app = Vue.createApp(App);
@@ -398,25 +412,64 @@ const sleep = (ms) => {
   }
   // 1.75倍速
   let rate175check = setInterval(()=>{
-    // console.log('1.75倍速')
+    log.info('1.75倍速')
     try{
+      if (!window.danmakuManage) return
       const createElement = (apeedRate) => {
         const rate = document.createElement('li')
-        rate.className = "cpx-player-ctrl-playbackrate-menu-item"
+        rate.className = "bpx-player-ctrl-playbackrate-menu-item"
         rate.dataset.value = `${apeedRate}`
         rate.textContent = `${apeedRate}x`
         return rate
       }
-      const speedRate = window.danmakuManage.nodes.controlBottomRight.querySelector('.cpx-player-ctrl-playbackrate-menu > li:nth-child(1)')
+      const speedRate = window.danmakuManage.nodes.controlBottomRight.querySelector('.bpx-player-ctrl-playbackrate-menu > li:nth-child(1)')
       
       speedRate.after(createElement(1.75))
       speedRate.before(createElement(4.0))
       speedRate.before(createElement(3.5))
       speedRate.before(createElement(3.0))
       speedRate.before(createElement(2.5))
+      {
+        let originalFilter = window.danmakuManage.danmaku.config.fn.filter
+        const customFilter = (t) => {
+          log.info('filter....')
+          if (originalFilter(t)){
+            // log.info('default block:', t.weight)
+            return true
+          }
+          if (localStorage.getItem('dm-filter-blockvip') === 'true')
+          {
+            // 屏蔽大会员彩色
+            if (t.colorful || t.colorfulImg) {
+              log.info('block vip', JSON.stringify(t, null, 4))
+              return true
+            }
+            
+          }
+          const weight = parseInt(localStorage.getItem('dm-filter-weight') || '0')
+          if (t.weight <= weight) {
+            log.info('current weight:', weight)
+            log.info('block weight:', JSON.stringify(t, null, 4))
+            return true
+          }
+          return false
+        }
+        window.danmakuManage.danmaku.config.fn.filter = customFilter
+        {
+          const originalInitDanmaku = window.danmakuManage.initDanmaku
+          window.danmakuManage.initDanmaku = function () {
+            log.info('initDanmaku...')
+            originalInitDanmaku.apply(this)
+            log.info('update filter...')
+            originalFilter = this.danmaku.config.fn.filter
+            window.danmakuManage.danmaku.config.fn.filter = customFilter
+          }
+        }
+
+      }
       clearInterval(rate175check)
     }catch(err){
-      // console.error('添加1.75倍速失败：', err)
+      log.error('添加1.75倍速异常：', err)
     }
   }, 1000)
 })()
